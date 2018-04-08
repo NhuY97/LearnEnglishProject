@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xlmns:th="http://www.thymeleaf.org" lang="zxx" class="no-js">
+<head>
+<!-- Mobile Specific Meta -->
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Favicon-->
+<link rel="shortcut icon" th:href="@{/img/avatar.jpg}">
+<!-- Author Meta -->
+<meta name="author" content="CodePixar">
+<!-- Meta Description -->
+<meta name="description" content="">
+<!-- Meta Keyword -->
+<meta name="keywords" content="">
+<!-- meta character set -->
+<meta charset="UTF-8">
+<!-- Site Title -->
+<title>Zenny English</title>
+
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,500,600"
+	rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Playfair Display'
+	rel='stylesheet'>
+<!--
+		CSS
+		============================================= -->
+<link rel="stylesheet" th:href="@{/css/linearicons.css}">
+<link rel="stylesheet" th:href="@{/css/owl.carousel.css}">
+<link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+<link rel="stylesheet" th:href="@{/css/nice-select.css}">
+<link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+<link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+	<div class="main-wrapper-first">
+		<header>
+			<div class="container">
+				<div class="header-wrap">
+					<div
+						class="header-top d-flex justify-content-between align-items-center">
+						<div class="logo">
+							<a href="/index" style="color: violet">Design By Tran Nguyen
+								Thanh Nhu Y</a>
+						</div>
+						<div class="main-menubar d-flex align-items-center">
+							<nav class="hide">
+								<a href="#">I</a> <a href="#">Love</a> <a href="#">You</a>
+							</nav>
+							<div class="menu-bar">
+								<span class="lnr lnr-menu"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+	</div>
+	<div class="main-wrapper" style="padding: 20px; background: #fff">
+		<div class="container">
+			<div class="content" style="text-align: center">
+				<h1 style="font-family: Playfair Display; color: purple">Learn
+					English With YZENNY97 &reg;</h1>
+				<img class="img-thumbnail" th:src="@{/img/avatar.jpg}" alt="" /><br />
+				<p>Study your way!</p>
+				<button id="btnCreateLesson" data-toggle="modal"
+					data-target="#myModal"
+					class="genric-btn primary-border circle arrow">
+					<span class="mr-10">Create New Lesson</span><span
+						class="lnr lnr-arrow-right"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="main-wrapper">
+		<!-- Start Feature Area -->
+		<section class="featured-area">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-4" th:each="lesson,iterationStatus : ${lessons}">
+						<div class="single-feature"
+							th:title="'Lesson ' + ${iterationStatus.count} +' - ' + ${lesson.name}">
+							<a th:href="@{'/lesson/'+${lesson.id}}+'/'+${iterationStatus.count}"><div
+									class="icon" style="cursor: pointer">
+									<span class="lnr lnr-sun"></span>
+								</div></a>
+							<div class="desc text-center">
+								<h6 class="title text-uppercase" th:utext="${lesson.name}"></h6>
+								<p>
+									<span style="color: red">Lesson <span
+										th:text="${iterationStatus.count}"></span> - Score: 
+										<span style="font-size:20px;" th:text="${lesson.score}"></span>
+										<br /><br/></span>New words (<span th:text="${lesson.words.size()}"></span>) : <span
+										th:utext="${lessonService.newWords(lesson.id)}"></span>
+								</p>
+								<a th:href="@{'/lesson/delete/'+${lesson.id}}"
+									onclick="return confirm('Are you sure?')" id="btn-delete"
+									style="font-family: courier; color: violet;">Remove Lesson</a>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</section>
+		<!-- End Feature Area -->
+		<!-- Start Footer Widget Area -->
+		<section class="footer-widget-area">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-4">
+						<div
+							class="single-widget d-flex flex-wrap justify-content-between">
+							<div
+								class="icon d-flex align-items-center justify-content-center">
+								<span class="lnr lnr-pushpin"></span>
+							</div>
+							<div class="desc">
+								<h6 class="title text-uppercase">University</h6>
+								<p>
+									HCMC of Teachnology <br />& Education
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div
+							class="single-widget d-flex flex-wrap justify-content-between">
+							<div
+								class="icon d-flex align-items-center justify-content-center">
+								<span class="lnr lnr-earth"></span>
+							</div>
+							<div class="desc">
+								<h6 class="title text-uppercase">Email Address</h6>
+								<div class="contact">
+									<a href="javascript:void(0)">nhuytnt1608@gmail.com</a> <br>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div
+							class="single-widget d-flex flex-wrap justify-content-between">
+							<div
+								class="icon d-flex align-items-center justify-content-center">
+								<span class="lnr lnr-phone"></span>
+							</div>
+							<div class="desc">
+								<h6 class="title text-uppercase">Phone Number</h6>
+								<div class="contact">
+									<a href="javascript:void(0)">+84 989 297 053</a> <br>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<footer>
+				<div class="container">
+					<div
+						class="footer-content d-flex justify-content-between align-items-center flex-wrap">
+						<div class="logo"></div>
+						<div class="copy-right-text">
+							Copyright &copy; 2018 | All rights reserved. Design by <i
+								class="fa fa-heart-o" aria-hidden="true"></i> by <a
+								href="https://colorlib.com" target="_blank">YZENNY</a>
+						</div>
+						<div class="footer-social">
+							<a href="https://www.fb.com/yzenny97" target="_blank"><i
+								class="fa fa-facebook"></i></a> <a href="#"><i
+								class="fa fa-twitter"></i></a> <a href="#"><i
+								class="fa fa-dribbble"></i></a> <a href="#"><i
+								class="fa fa-behance"></i></a>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</section>
+		<!-- End Footer Widget Area -->
+
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						<b>Create New Lesson</b>
+					</h4>
+					<button style="cursor: pointer; color: orange" type="button"
+						class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" th:action="@{/addLesson}"
+						th:method="post" th:object="${lessonForm}">
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="name"><b>Name:</b></label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="name"
+									placeholder="Enter lesson name"
+									pattern="^[A-Za-z ][A-Za-z0-9!@#$%^&'* ]*$" th:field="*{name}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="mean"><b>Mean:</b></label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="mean"
+									placeholder="Enter Vietnamese meaning" th:field="*{mean}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-4 col-sm-4">
+								<button style="cursor: pointer" type="submit"
+									class="genric-btn primary-border">Create</button>
+							</div>
+						</div>
+						<div>
+							<p id="invalidForm" style="font-family: courier; color: red"
+								th:text="${invalidFormMessage}"></p>
+						</div>
+					</form>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="modal fade" id="messageModal" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<p th:utext="${deleteErrMessage}" id="deleteErrMessage"></p>
+					<button style="cursor: pointer; color: orange" type="button"
+						class="close" data-dismiss="modal">&times;</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script th:src="@{/js/vendor/jquery-2.2.4.min.js}"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+		integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+		crossorigin="anonymous"></script>
+	<script th:src="@{/js/vendor/bootstrap.min.js}"></script>
+	<script th:src="@{/js/jquery.ajaxchimp.min.js}"></script>
+	<script th:src="@{/js/owl.carousel.min.js}"></script>
+	<script th:src="@{/js/jquery.nice-select.min.js}"></script>
+	<script th:src="@{/js/jquery.magnific-popup.min.js}"></script>
+	<script th:src="@{/js/main.js}"></script>
+	<script type="text/javascript">
+		$(function() {
+			if ($("#invalidForm").text())
+				$('#myModal').modal();
+			if ($("#deleteErrMessage").text())
+				$('#messageModal').modal();
+		});
+	</script>
+</body>
+</html>

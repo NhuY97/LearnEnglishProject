@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xlmns:th="http://www.thymeleaf.org" lang="zxx" class="no-js">
+<head>
+<!-- Mobile Specific Meta -->
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Favicon-->
+<link rel="shortcut icon" th:href="@{/img/avatar.jpg}">
+<!-- Author Meta -->
+<meta name="author" content="CodePixar">
+<!-- Meta Description -->
+<meta name="description" content="">
+<!-- Meta Keyword -->
+<meta name="keywords" content="">
+<!-- meta character set -->
+<meta charset="UTF-8">
+<!-- Site Title -->
+<title th:text="'Lesson '+${session.order}+' - '+${session.lesson.name}"></title>
+
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,500,600"
+	rel="stylesheet">
+<link href='https://fonts.googleapis.com/css?family=Playfair Display'
+	rel='stylesheet'>
+<!--
+		CSS
+		============================================= -->
+<link rel="stylesheet" th:href="@{/css/linearicons.css}">
+<link rel="stylesheet" th:href="@{/css/owl.carousel.css}">
+<link rel="stylesheet" th:href="@{/css/font-awesome.min.css}">
+<link rel="stylesheet" th:href="@{/css/nice-select.css}">
+<link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+<link rel="stylesheet" th:href="@{/css/main.css}">
+<style>
+#textShadow {
+	color: violet;
+	text-shadow: 0 1px 0 #bbb, 0 2px 0 #bbb, 0 3px 0 #aaa, 0 4px 0 #aaa, 0
+		5px 0 #999, 0 6px 1px #fff, 0 0px 3px #fff, 0 1px 3px #fff, 0 3px 5px
+		#fff, 0 5px 10px #fff, 0 5px 20px violet;
+}
+
+#myAvatar {
+	-webkit-animation: mymove 5s infinite; /* Chrome, Safari, Opera */
+	animation: mymove 3s 1;
+}
+
+/* Chrome, Safari, Opera */
+@
+-webkit-keyframes mymove { 100% {
+	-webkit-transform: rotate(360deg);
+}
+
+}
+
+/* Standard syntax */
+@
+keyframes mymove { 100% {
+	transform: rotate(360deg);
+}
+}
+</style>
+</head>
+<body>
+	<input type="hidden" id="modify" th:value="${modify}" />
+	<div class="main-wrapper-first">
+		<header style="background-color: #fff">
+			<div class="container">
+				<div class="header-wrap">
+					<div
+						class="header-top d-flex justify-content-between align-items-center">
+						<div class="logo">
+							<a href="/index" style="color: violet">Home</a>
+						</div>
+						<div class="main-menubar d-flex align-items-center">
+							<nav class="hide">
+								<a href="#">I</a> <a href="#">Love</a> <a href="#">You</a>
+							</nav>
+							<div class="menu-bar">
+								<span class="lnr lnr-menu"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+	</div>
+	<div class="main-wrapper" style="padding: 20px; background-color: #fff">
+		<div class="container">
+			<div class="content" style="text-align: center">
+				<h1 id="textShadow" style="font-family: Playfair Display"
+					class="text-uppercase"
+					th:text="'lesson '+${session.order}+' - '+${session.lesson.name}"></h1>
+				<img id="myAvatar" class="img-thumbnail" th:src="@{/img/avatar.jpg}"
+					alt="" /><br />
+				<p>Study your way!</p>
+				<button id="btnCreateLesson" data-toggle="modal"
+					data-target="#myModal"
+					class="genric-btn primary-border circle arrow">
+					<span class="mr-10">Add New Words</span><span
+						class="lnr lnr-arrow-right"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="main-wrapper">
+		<!-- Start Feature Area -->
+		<section class="featured-area" style="background-color: #fff">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="single-feature"
+							th:title="'Lesson '+ ${session.order}+' - Task 1'">
+							<a th:href="@{/do/lesson/__${session.order}__/task1}"><div class="icon" style="cursor: pointer">
+								<span class="lnr lnr-code"></span>
+							</div></a>
+							<div class="desc text-center">
+								<h6 class="title text-uppercase" style="color: green">Task
+									1</h6>
+								<p>
+									<span style="color: violet">Translate Vietnamese
+										sentences to English<br />
+									</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="single-feature"
+							th:title="'Lesson '+ ${session.order}+' - Task 2'">
+							<a th:href="@{/do/lesson/__${session.order}__/task2}"><div class="icon" style="cursor: pointer">
+								<span class="lnr lnr-code"></span>
+							</div></a>
+							<div class="desc text-center">
+								<h6 class="title text-uppercase" style="color: green">Task
+									2</h6>
+								<p>
+									<span style="color: violet">Find Synonyms<br />
+									</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="single-feature"
+							th:title="'Lesson '+ ${session.order}+' - Task 3'">
+							<a th:href="@{/do/lesson/__${session.order}__/task3}"><div class="icon" style="cursor: pointer">
+								<span class="lnr lnr-code"></span>
+							</div></a>
+							<div class="desc text-center">
+								<h6 class="title text-uppercase" style="color: green">Task
+									3</h6>
+								<p>
+									<span style="color: violet">Fill in the blanks<br />
+									</span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4"></div>
+					<div class="col-md-4">
+						<div class="single-feature"
+							th:title="'Lesson '+ ${session.order}+' - Analysis'">
+							<a th:href="@{/}"><div class="icon" style="cursor: pointer">
+								<span class="lnr lnr-earth"></span>
+							</div></a>
+							<div class="desc text-center">
+								<h6 class="title text-uppercase" style="color: orange">Analysis</h6>
+								<p>
+									<span style="color: purple">Analyze Progress<br />
+									</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="footer-widget-area">
+			<div
+				style="color: #fff; text-align: center; font-family: Playfair Display; font-size: x-large">Try
+				your best!</div>
+			<footer style="background-color: violet">
+				<div class="container">
+					<div
+						class="footer-content d-flex justify-content-between align-items-center flex-wrap">
+						<div class="logo"></div>
+						<div class="copy-right-text">
+							Copyright &copy; 2018 | All rights reserved. Design by <i
+								class="fa fa-heart-o" aria-hidden="true"></i> by <a
+								href="https://colorlib.com" target="_blank">YZENNY</a>
+						</div>
+						<div class="footer-social">
+							<a href="https://www.fb.com/yzenny97" target="_blank"><i
+								class="fa fa-facebook"></i></a> <a href="#"><i
+								class="fa fa-twitter"></i></a> <a href="#"><i
+								class="fa fa-dribbble"></i></a> <a href="#"><i
+								class="fa fa-behance"></i></a>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</section>
+		<!-- End Feature Area -->
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="myModal" role="dialog">
+		<div class="modal-dialog modal-lg">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						<b>Create New Word</b>
+					</h4>
+					<button style="cursor: pointer; color: orange" type="button"
+						class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form action="#"
+						th:action="@{/lesson/__${session.lesson.id}__/__${session.order}__}"
+						th:object="${wordForm}" method="post">
+						<div class="form-group">
+							<label class="control-label col-sm-2" for="name"><b>Name:</b></label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="name"
+									placeholder="Enter name"
+									pattern="^[A-Za-z ][A-Za-z0-9!@#$%^&'* ]*$" th:field="*{name}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<table class="table table-reponsive">
+								<thead>
+									<tr>
+										<th>No.</th>
+										<th style="text-align: center">Eng Sentence</th>
+										<th style="text-align: center">Vi Sentence</th>
+										<th>
+											<button type="submit" name="addRow" class="genric-btn primary circle small">New sentence</button>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="row,rowStat : *{sentenceEngs}">
+										<td th:text="${rowStat.count}">1</td>
+										<td><input class="form-control" type="text" pattern="^[A-Za-z ][A-Za-z0-9!@#$%^&'* ]*$"
+											th:field="${wordForm.sentenceEngs[__${rowStat.index}__].sentence}" /></td>
+										<td><input class="form-control" type="text"
+											th:field="${wordForm.sentenceVis[__${rowStat.index}__].sentence}" /></td>
+										<td>
+											<button type="submit" name="removeRow" class="genric-btn danger small"
+												th:value="${rowStat.index}" formnovalidate >Remove</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-4 col-sm-4">
+								<button style="cursor: pointer" type="submit" name="save"
+									class="genric-btn primary-border">Create</button>
+							</div>
+						</div>
+						<div>
+							<p id="invalidForm" style="font-family: courier; color: red"
+								th:text="${invalidFormMessage}"></p>
+						</div>
+					</form>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="modal fade" id="messageModal" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<p th:utext="${deleteErrMessage}" id="deleteErrMessage"></p>
+					<button style="cursor: pointer; color: orange" type="button"
+						class="close" data-dismiss="modal">&times;</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script th:src="@{/js/vendor/jquery-2.2.4.min.js}"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+		integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+		crossorigin="anonymous"></script>
+	<script th:src="@{/js/vendor/bootstrap.min.js}"></script>
+	<script th:src="@{/js/jquery.ajaxchimp.min.js}"></script>
+	<script th:src="@{/js/owl.carousel.min.js}"></script>
+	<script th:src="@{/js/jquery.nice-select.min.js}"></script>
+	<script th:src="@{/js/jquery.magnific-popup.min.js}"></script>
+	<script th:src="@{/js/main.js}"></script>
+	<script type="text/javascript">
+		$(function() {
+			$(":text").prop('required',true);
+			$(":text").not("#name").attr('minlength',5);
+			
+			if ($("#invalidForm").text() || $("#modify").val())
+				$('#myModal').modal();
+			if ($("#deleteErrMessage").text())
+				$('#messageModal').modal();
+
+		});
+	</script>
+</body>
+</html>
