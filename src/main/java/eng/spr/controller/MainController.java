@@ -1,7 +1,9 @@
 package eng.spr.controller;
 
-
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -60,37 +62,34 @@ public class MainController {
 	private String dupSentenceMess;
 	@Value("${message.dupSynonymMess}")
 	private String dupSynonymMess;
-	
+
 	private ArrayList<SentenceVi> listSentenceVi;
 
-	
 	/* Dynamic Field in Form */
-	@RequestMapping(value="/lesson/{id}/{order}", params={"addRow"},method=RequestMethod.POST)
-	public String addRow(final WordForm wordForm, final BindingResult bindingResult,Model m,final HttpServletRequest req) {
-	    m.addAttribute("modify", "true");
-	    wordForm.getSentenceEngs().add(new SentenceEng());
-	    wordForm.getSentenceVis().add(new SentenceVi());
-	    return "main";
+	@RequestMapping(value = "/lesson/{id}/{order}", params = { "addRow" }, method = RequestMethod.POST)
+	public String addRow(final WordForm wordForm, final BindingResult bindingResult, Model m,
+			final HttpServletRequest req) {
+		m.addAttribute("modify", "true");
+		wordForm.getSentenceEngs().add(new SentenceEng());
+		wordForm.getSentenceVis().add(new SentenceVi());
+		return "main";
 	}
 
-	@RequestMapping(value="/lesson/{id}/{order}", params={"removeRow"},method=RequestMethod.POST)
-	public String removeRow(
-			final WordForm wordForm, final BindingResult bindingResult, 
-	        final HttpServletRequest req,Model m) {
+	@RequestMapping(value = "/lesson/{id}/{order}", params = { "removeRow" }, method = RequestMethod.POST)
+	public String removeRow(final WordForm wordForm, final BindingResult bindingResult, final HttpServletRequest req,
+			Model m) {
 		Integer index = Integer.valueOf(req.getParameter("removeRow"));
 		wordForm.getSentenceEngs().remove(index.intValue());
 		wordForm.getSentenceVis().remove(index.intValue());
-	    m.addAttribute("modify", "true");
-	    return "main";
+		m.addAttribute("modify", "true");
+		return "main";
 	}
 	/* End */
-	
+
 	@RequestMapping(value = { "/", "/addWord", "/addLesson", "/index" }, method = RequestMethod.GET)
 	public String home(@ModelAttribute("invalidForm") String invalidForm,
-			@ModelAttribute("dup_synonym") String dupSynonym,
-			@ModelAttribute("dup_sentence") String dupSentence,
-			@ModelAttribute("deleteErr") String deleteErr,
-			Model m, HttpSession session) {
+			@ModelAttribute("dup_synonym") String dupSynonym, @ModelAttribute("dup_sentence") String dupSentence,
+			@ModelAttribute("deleteErr") String deleteErr, Model m, HttpSession session) {
 		session.invalidate();
 		m.addAttribute("lessons", lessonService.findAll());
 		m.addAttribute("lessonService", lessonService);
@@ -117,7 +116,7 @@ public class MainController {
 			lesson.setName(lessonForm.getName());
 			try {
 				lessonService.insertLesson(lesson);
-			} catch(DataIntegrityViolationException e) {
+			} catch (DataIntegrityViolationException e) {
 				ra.addFlashAttribute("invalidForm", true);
 			}
 		}
@@ -141,8 +140,7 @@ public class MainController {
 
 	@RequestMapping(value = "/lesson/{id}/{order}", method = RequestMethod.GET)
 	public String performLesson(@ModelAttribute("invalidForm") String invalidForm,
-			@PathVariable("order") String strOrder, @PathVariable("id") String strId,
-			Model m, HttpSession session) {
+			@PathVariable("order") String strOrder, @PathVariable("id") String strId, Model m, HttpSession session) {
 		int id, order;
 		m.addAttribute("modify", "");
 		try {
@@ -158,17 +156,19 @@ public class MainController {
 		session.setAttribute("lesson", lesson);
 		session.setAttribute("order", order);
 		session.removeAttribute("offsetT1");
-		if(listSentenceVi!=null) listSentenceVi = null;
+		if (listSentenceVi != null)
+			listSentenceVi = null;
 		m.addAttribute("wordForm", new WordForm());
 		return "main";
 	}
 
 	//
 
-	@RequestMapping(value = "/lesson/{id}/{order}",params= {"save"}, method=RequestMethod.POST)
-	public String saveNewWord(@Valid final WordForm wordForm, BindingResult br,
-			HttpSession session, RedirectAttributes ra) {
-		if(listSentenceVi!=null) listSentenceVi = null;
+	@RequestMapping(value = "/lesson/{id}/{order}", params = { "save" }, method = RequestMethod.POST)
+	public String saveNewWord(@Valid final WordForm wordForm, BindingResult br, HttpSession session,
+			RedirectAttributes ra) {
+		if (listSentenceVi != null)
+			listSentenceVi = null;
 		Lesson lesson = (Lesson) session.getAttribute("lesson");
 		String order = session.getAttribute("order").toString();
 		String redirect = "redirect:/lesson/" + lesson.getId() + "/" + order;
@@ -180,7 +180,7 @@ public class MainController {
 			word.setLesson(lesson);
 			try {
 				wordService.insertWord(word);
-			} catch(DataIntegrityViolationException e) {
+			} catch (DataIntegrityViolationException e) {
 				ra.addFlashAttribute("invalidForm", true);
 				return redirect;
 			}
@@ -192,23 +192,22 @@ public class MainController {
 					synonym.setWord(word);
 					try {
 						synonymService.insertSynonym(synonym);
-					} catch(DataIntegrityViolationException e) {
+					} catch (DataIntegrityViolationException e) {
 						ra.addFlashAttribute("dup_synonym", true);
 					}
 				}
 			}
-			if(wordForm.getSentenceEngs() != null && wordForm.getSentenceVis() != null)
-				for(int i=0;i<wordForm.getSentenceEngs().size();i++) {
-					if(wordForm.getSentenceEngs().get(i) == null || 
-							wordForm.getSentenceVis().get(i) == null || 
-							wordForm.getSentenceVis().get(i).getSentence().trim().isEmpty() ||
-							wordForm.getSentenceEngs().get(i).getSentence().trim().isEmpty())
+			if (wordForm.getSentenceEngs() != null && wordForm.getSentenceVis() != null)
+				for (int i = 0; i < wordForm.getSentenceEngs().size(); i++) {
+					if (wordForm.getSentenceEngs().get(i) == null || wordForm.getSentenceVis().get(i) == null
+							|| wordForm.getSentenceVis().get(i).getSentence().trim().isEmpty()
+							|| wordForm.getSentenceEngs().get(i).getSentence().trim().isEmpty())
 						continue;
 					SentenceEng eng = wordForm.getSentenceEngs().get(i);
 					SentenceVi vi = wordForm.getSentenceVis().get(i);
 					SentenceEng sentenceEng = new SentenceEng();
 					SentenceVi sentenceVi = new SentenceVi();
-					sentenceEng.setSentence(eng.getSentence());
+					sentenceEng.setSentence(formatSentence(eng.getSentence()));
 					sentenceEng.setWord(word);
 					sentenceVi.setSentence(vi.getSentence());
 					sentenceVi.setSentenceEng(sentenceEng);
@@ -216,83 +215,192 @@ public class MainController {
 					try {
 						sentenceEngService.insertSentenceEng(sentenceEng);
 						sentenceViService.insertSentenceVi(sentenceVi);
-					} catch(DataIntegrityViolationException e) {
+					} catch (DataIntegrityViolationException e) {
 						ra.addFlashAttribute("dup_sentence", true);
 					}
 				}
 		}
 		return redirect;
 	}
-	
+
 	/* DO TASK 1 */
-	
-	@RequestMapping(value="/do/lesson/{order}/task1", method=RequestMethod.GET)
-	public String doTask1(@PathVariable("order") String order,HttpSession session,Model m,RedirectAttributes ra) {
-		if(session.getAttribute("lesson") == null)
+
+	@RequestMapping(value = "/do/lesson/{order}/task1", method = RequestMethod.GET)
+	public String doTask1(@PathVariable("order") String order, HttpSession session, Model m, RedirectAttributes ra) {
+		if (session.getAttribute("lesson") == null)
 			return "redirect:/";
 		Lesson lesson = (Lesson) session.getAttribute("lesson");
-		if(sentenceEngService.mapSentence(lesson) != null && 
-				sentenceEngService.mapSentence(lesson).size() > 0) {
+		if (sentenceEngService.mapSentence(lesson) != null && sentenceEngService.mapSentence(lesson).size() > 0) {
 			int offset = 0;
-			if(session.getAttribute("offsetT1") == null)
+			if (session.getAttribute("offsetT1") == null)
 				session.setAttribute("offsetT1", 0);
 			else {
 				offset = Integer.valueOf(session.getAttribute("offsetT1").toString()).intValue();
 			}
-			
-			if(listSentenceVi == null)
-			listSentenceVi = new ArrayList<SentenceVi>(sentenceEngService.mapSentence(lesson).keySet());
-			m.addAttribute("total",listSentenceVi.size());
-			if(offset>=listSentenceVi.size()) {
+
+			if (listSentenceVi == null)
+				{
+				listSentenceVi = new ArrayList<SentenceVi>(sentenceEngService.mapSentence(lesson).keySet());
+				Collections.shuffle(listSentenceVi);
+				}
+			m.addAttribute("total", listSentenceVi.size());
+			if (offset >= listSentenceVi.size()) {
 				offset = -1;
 				int score = lesson.getScore();
-				lesson.setScore(score + (listSentenceVi.size()*100));
+				lesson.setScore(score + (listSentenceVi.size() * 100));
 				lessonService.updateLesson(lesson);
 				session.setAttribute("lesson", lesson);
 				session.setAttribute("offsetT1", offset);
-			} else if(offset!=-1)
+			} else if (offset != -1)
 				m.addAttribute("sentenceVi", listSentenceVi.get(offset).getSentence());
-			if(offset == -1)
+			if (offset == -1)
 				m.addAttribute("finish", true);
-		}else {
-			String s = "No sentence in this lesson! <a href='/lesson/"+lesson.getId()+"/"+session.getAttribute("order")+"'><b>Go back</b></a> and create by yourself!";
+		} else {
+			String s = "No sentence in this lesson! <a href='/lesson/" + lesson.getId() + "/"
+					+ session.getAttribute("order") + "'><b>Go back</b></a> and create by yourself!";
 			m.addAttribute("deleteErrMessage", s);
 		}
 		return "task1";
 	}
-	
-	//submit answer
-	@RequestMapping(value="/do/lesson/{order}/task1", method=RequestMethod.POST)
-	public String submitAnswer(@PathVariable("order") String order,
-			@RequestParam("answer") String answer,@RequestParam("question") String question,
-			HttpSession session,Model m,RedirectAttributes ra) {
-		if(session.getAttribute("lesson") == null || session.getAttribute("offsetT1")==null)
+
+	// submit answer
+	@RequestMapping(value = "/do/lesson/{order}/task1", method = RequestMethod.POST)
+	public String submitAnswer(@PathVariable("order") String order, @RequestParam("answer") String answer,
+			@RequestParam("question") String question, HttpSession session, Model m, RedirectAttributes ra) {
+		if (session.getAttribute("lesson") == null || session.getAttribute("offsetT1") == null)
 			return "redirect:/";
 		answer = answer.replaceAll("\\s+", " ");
 		question = question.replaceAll("\\s+", " ");
-		String redirect = "redirect:/do/lesson/"+session.getAttribute("order")+"/task1";
+		String redirect = "redirect:/do/lesson/" + session.getAttribute("order") + "/task1";
 		Lesson lesson = (Lesson) session.getAttribute("lesson");
 		SentenceVi sentenceVi = sentenceViService.findBySentence(question);
-		if(sentenceVi == null) {
+		if (sentenceVi == null) {
 			ra.addAttribute("deleteErrMessage", deleteErrMessage);
 			return redirect;
 		}
 		SentenceEng sentenceEng = sentenceEngService.mapSentence(lesson).get(sentenceVi);
-		if(sentenceEng == null) {
+		if (sentenceEng == null) {
 			ra.addAttribute("deleteErrMessage", deleteErrMessage);
 			return redirect;
 		}
-		if(sentenceEng.getSentence().trim().toLowerCase().equals(answer.trim().toLowerCase()))
-		{
-			int offset = Integer.valueOf(session.getAttribute("offsetT1").toString()).intValue();
-			session.setAttribute("offsetT1", ++offset);
-			ra.addFlashAttribute("progress", true);
-		} else {
-			ra.addFlashAttribute("answer", answer);
-			return redirect;
+		String answerCheck = answer.replaceAll("[^\\w\\s]","");
+		answerCheck = answerCheck.trim().toLowerCase();
+		answerCheck = answerCheck.replaceAll("\\s+", " ");
+		String[] arrAnswerCorrect = sentenceEng.getSentence().split("```");
+		for(String answerCorrect : arrAnswerCorrect) {
+			if(answerCorrect == null || answerCorrect.isEmpty())
+				continue;
+			answerCorrect = answerCorrect.replaceAll("[^\\w\\s]","");
+			answerCorrect = answerCorrect.trim().toLowerCase();
+			if (answerCorrect.equals(answerCheck)) {
+				int offset = Integer.valueOf(session.getAttribute("offsetT1").toString()).intValue();
+				session.setAttribute("offsetT1", ++offset);
+				ra.addFlashAttribute("progress", true);
+				return redirect;
+			}
 		}
-		
+		ra.addFlashAttribute("answer", answer);
 		return redirect;
 	}
-	
+
+	//
+	private String formatSentence(String str) {
+		str = str.trim().toLowerCase();
+		String[] arrWords = { " am ", " is ", " are ", " will ", " shall ", " not ", " would ", " has ", " have ",
+				" had ", " will not" };
+		int[][] arrOne = { { 0 }, { 1 } };
+		int[][] arrTwo = { { 0, 0 }, { 0, 1 }, { 1, 0 }, { 1, 1 } };
+		int[][] arrThree = { { 0, 0, 0 }, { 0, 0, 1 }, { 0, 1, 0 }, { 0, 1, 1 }, { 1, 0, 0 }, { 1, 0, 1 }, { 1, 1, 0 },
+				{ 1, 1, 1 } };
+		int[][] arrFour = { { 0, 0, 0, 0 }, { 0, 0, 0, 1 }, { 0, 0, 1, 0 }, { 0, 0, 1, 1 }, { 0, 1, 0, 0 },
+				{ 0, 1, 0, 1 }, { 0, 1, 1, 0 }, { 0, 1, 1, 1 }, { 1, 0, 0, 0 }, { 1, 0, 0, 1 }, { 1, 0, 1, 0 },
+				{ 1, 0, 1, 1 }, { 1, 1, 0, 0 }, { 1, 1, 0, 1 }, { 1, 1, 1, 0 }, { 1, 1, 1, 1 } };
+		List<String> listWordsInSentence = new ArrayList<String>();
+		for (String w : arrWords) {
+			if (str.indexOf(w) != -1)
+				listWordsInSentence.add(w);
+		}
+		String rs = "";
+		switch (listWordsInSentence.size()) {
+		case 1:
+			rs = Cal(arrOne, listWordsInSentence, str,2);
+			break;
+		case 2:
+			rs = Cal(arrTwo, listWordsInSentence, str,4);
+			break;
+		case 3:
+			rs = Cal(arrThree, listWordsInSentence, str,8);
+			break;
+		case 4:
+			rs = Cal(arrFour, listWordsInSentence, str,16);
+			break;
+		default:
+			rs = str;
+			break;
+		}
+		if (rs.trim().isEmpty())
+			rs = str;
+		return rs;
+	}
+
+	private String Cal(int[][] arr, List<String> listWords, String str,int length) {
+		String rs = "";
+		for (int i = 0; i < length; i++) {
+			String elementStr = str;
+			for (int j = 0; j < listWords.size(); j++) {
+				if (arr[i][j] == 1) {
+					String word = listWords.get(j);
+					String newWord = changeWord(word);
+					elementStr = elementStr.replaceAll(word, newWord);
+				} else
+					continue;
+			}
+			rs += elementStr + "```";
+		}
+
+		return rs;
+	}
+
+	private String changeWord(String word) {
+		String newWord;
+		switch (word) {
+		case " am ":
+			newWord = "'m ";
+			break;
+		case " is ":
+			newWord = "'s ";
+			break;
+		case " are ":
+			newWord = "'re ";
+			break;
+		case " will ":
+			newWord = "'ll ";
+			break;
+		case " shall ":
+			newWord = "'ll ";
+			break;
+		case " not ":
+			newWord = "n't ";
+			break;
+		case " would ":
+			newWord = "'d ";
+			break;
+		case " has ":
+			newWord = "'s ";
+			break;
+		case " have ":
+			newWord = "'ve ";
+			break;
+		case " had ":
+			newWord = "'d ";
+			break;
+		case " will not":
+			newWord = " won't";
+			break;
+		default:
+			newWord = word;
+			break;
+		}
+		return newWord;
+	}
 }
