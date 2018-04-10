@@ -1,9 +1,10 @@
 package eng.spr.controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,6 +29,7 @@ import eng.spr.model.SentenceEng;
 import eng.spr.model.SentenceVi;
 import eng.spr.model.Synonym;
 import eng.spr.model.Word;
+import eng.spr.modelform.AnswerTask2;
 import eng.spr.modelform.WordForm;
 import eng.spr.service.AnalysisTask1Service;
 import eng.spr.service.AnalysisTask2Service;
@@ -36,6 +38,7 @@ import eng.spr.service.SentenceEngService;
 import eng.spr.service.SentenceViService;
 import eng.spr.service.SynonymService;
 import eng.spr.service.WordService;
+import javassist.CodeConverter.ArrayAccessReplacementMethodNames;
 
 @Controller
 public class MainController {
@@ -65,7 +68,8 @@ public class MainController {
 
 	private ArrayList<SentenceVi> listSentenceVi;
 
-	/* Dynamic Field in Form */
+	/* Dynamic Field in Form  */
+	// ADD AND REMOVE SENTENCE
 	@RequestMapping(value = "/lesson/{id}/{order}", params = { "addRow" }, method = RequestMethod.POST)
 	public String addRow(final WordForm wordForm, final BindingResult bindingResult, Model m,
 			final HttpServletRequest req) {
@@ -81,6 +85,24 @@ public class MainController {
 		Integer index = Integer.valueOf(req.getParameter("removeRow"));
 		wordForm.getSentenceEngs().remove(index.intValue());
 		wordForm.getSentenceVis().remove(index.intValue());
+		m.addAttribute("modify", "true");
+		return "main";
+	}
+	
+	//ADD AND REMOVE WORD FAMILY
+	@RequestMapping(value = "/lesson/{id}/{order}", params = { "addWF" }, method = RequestMethod.POST)
+	public String addWF(final WordForm wordForm, final BindingResult bindingResult, Model m,
+			final HttpServletRequest req) {
+		m.addAttribute("modify", "true");
+		wordForm.getSynonyms().add(new Synonym());
+		return "main";
+	}
+
+	@RequestMapping(value = "/lesson/{id}/{order}", params = { "removeWF" }, method = RequestMethod.POST)
+	public String removeWF(final WordForm wordForm, final BindingResult bindingResult, final HttpServletRequest req,
+			Model m) {
+		Integer index = Integer.valueOf(req.getParameter("removeWF"));
+		wordForm.getSynonyms().remove(index.intValue());
 		m.addAttribute("modify", "true");
 		return "main";
 	}
@@ -156,6 +178,7 @@ public class MainController {
 		session.setAttribute("lesson", lesson);
 		session.setAttribute("order", order);
 		session.removeAttribute("offsetT1");
+		session.removeAttribute("complete");
 		if (listSentenceVi != null)
 			listSentenceVi = null;
 		m.addAttribute("wordForm", new WordForm());
@@ -187,7 +210,6 @@ public class MainController {
 			if (wordForm.getSynonyms() != null) {
 				for (Synonym s : wordForm.getSynonyms()) {
 					Synonym synonym = new Synonym();
-					synonym.setMean(s.getMean());
 					synonym.setSynonymName(s.getSynonymName());
 					synonym.setWord(word);
 					try {
@@ -251,8 +273,11 @@ public class MainController {
 				lessonService.updateLesson(lesson);
 				session.setAttribute("lesson", lesson);
 				session.setAttribute("offsetT1", offset);
-			} else if (offset != -1)
-				m.addAttribute("sentenceVi", listSentenceVi.get(offset).getSentence());
+			} else if (offset != -1) {
+				String sentenceVi = listSentenceVi.get(offset).getSentence();
+				m.addAttribute("sentenceVi", sentenceVi);
+				m.addAttribute("answerCorrect", sentenceEngService.mapSentence(lesson).get(sentenceViService.findBySentence(sentenceVi)).getSentence().split("```")[0]);
+			}
 			if (offset == -1)
 				m.addAttribute("finish", true);
 		} else {
@@ -275,12 +300,12 @@ public class MainController {
 		Lesson lesson = (Lesson) session.getAttribute("lesson");
 		SentenceVi sentenceVi = sentenceViService.findBySentence(question);
 		if (sentenceVi == null) {
-			ra.addAttribute("deleteErrMessage", deleteErrMessage);
+			ra.addFlashAttribute("deleteErrMessage", deleteErrMessage);
 			return redirect;
 		}
 		SentenceEng sentenceEng = sentenceEngService.mapSentence(lesson).get(sentenceVi);
 		if (sentenceEng == null) {
-			ra.addAttribute("deleteErrMessage", deleteErrMessage);
+			ra.addFlashAttribute("deleteErrMessage", deleteErrMessage);
 			return redirect;
 		}
 		String answerCheck = answer.replaceAll("[^\\w\\s]","");
@@ -302,7 +327,73 @@ public class MainController {
 		ra.addFlashAttribute("answer", answer);
 		return redirect;
 	}
+	/*END TASK 1 */
+	
+	/*BEGIN TASK 2 */
+	
+	@RequestMapping(value = "/do/lesson/{order}/task2", method = RequestMethod.GET)
+	public String doTask2(@PathVariable("order") String order, HttpSession session, Model m) {
+		if (session.getAttribute("lesson") == null)
+			return "redirect:/";
+		Lesson lesson = (Lesson) session.getAttribute("lesson");
+		List<Word> words = wordService.findAllByLessonHasSynonym(lesson);
+		m.addAttribute("words",words);
+		AnswerTask2 answerTask2 =new AnswerTask2(words.size());
+		AnswerTask2.arrCorrectAnswer = null;
+		AnswerTask2.arrCorrectAnswer = new String[words.size()];
+		for(int i=0;i<words.size();i++) {
+			AnswerTask2.arrCorrectAnswer[i] = "";
+			for(Synonym s : words.get(i).getListSynonym()) {
+				if(s == null || s.getSynonymName().isEmpty()) continue;
+				String answerCr = s.getSynonymName().trim().toLowerCase();
+				answerCr = answerCr.replaceAll("\\s+", " ");
+				AnswerTask2.arrCorrectAnswer[i] += answerCr + "; ";
+			}
+		}
+		m.addAttribute("answerTask2",answerTask2);
+		return "task2";
+	}
 
+	// submit answer
+	@RequestMapping(value = "/do/lesson/{order}/task2", method = RequestMethod.POST)
+	public String submitTask2(@PathVariable("order") String order,@Valid final AnswerTask2 answerTask2, BindingResult br, 
+			HttpSession session, Model m, RedirectAttributes ra) {
+		Lesson lesson =(Lesson)session.getAttribute("lesson"); 
+		if (lesson == null)
+			return "redirect:/";
+		String redirect = "redirect:/do/lesson/"+session.getAttribute("order")+"/task2";
+		Map<Integer,String> mapResult = new HashMap<Integer,String>();
+		for(int i = 0;i<answerTask2.getArrAnswer().length;i++) {
+			String answer = answerTask2.getArrAnswer()[i];
+			answer = answer.trim().toLowerCase();
+			answer = answer.replaceAll("\\s+", " ");
+			String correctAnswer = AnswerTask2.arrCorrectAnswer[i];
+			correctAnswer = correctAnswer.replaceAll("\\s+", " ");
+			String[] answerSplit = answer.split(";");
+			String f = "true";
+			int count =0;
+			for(String a : answerSplit) {
+				if(correctAnswer.indexOf(a+";") == - 1)
+					f = "false";
+				else count++;
+			}
+			if(f.equals("true"))
+				if(count < correctAnswer.split(";").length - 1) f = "warning";
+			mapResult.put(i+1,f);
+		}
+		ra.addFlashAttribute("mapResult",mapResult);
+		ra.addFlashAttribute("arrAnswerFlash", answerTask2.getArrAnswer());
+		if(session.getAttribute("complete") != null)
+			session.removeAttribute("complete");
+		if(!mapResult.containsValue("false") && !mapResult.containsValue("warning")) {
+			session.setAttribute("complete", "true");
+			lesson.setScore(lesson.getScore() + answerTask2.getArrAnswer().length*100);
+			lessonService.updateLesson(lesson);
+		}
+		return redirect;
+	}
+	
+	/*END TASK 2*/
 	//
 	private String formatSentence(String str) {
 		str = str.trim().toLowerCase();

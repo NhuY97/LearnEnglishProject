@@ -93,6 +93,7 @@ keyframes mymove { 100% {
 				<img id="myAvatar" class="img-thumbnail" th:src="@{/img/avatar.jpg}"
 					alt="" /><br />
 				<p>Study your way!</p>
+				<p style="font-family:courier;color:red" th:text="'Total score:' + ${session.lesson.score}"></p>
 				<button id="btnCreateLesson" data-toggle="modal"
 					data-target="#myModal"
 					class="genric-btn primary-border circle arrow">
@@ -133,7 +134,7 @@ keyframes mymove { 100% {
 								<h6 class="title text-uppercase" style="color: green">Task
 									2</h6>
 								<p>
-									<span style="color: violet">Find Synonyms<br />
+									<span style="color: violet">Find word families<br />
 									</span>
 							</div>
 						</div>
@@ -224,6 +225,35 @@ keyframes mymove { 100% {
 									pattern="^[A-Za-z ][A-Za-z0-9!@#$%^&_'*\.,?<>()+\- ]*$" th:field="*{name}" />
 							</div>
 						</div>
+						<!-- Input Word Families -->
+						<div class="form-group">
+							<table class="table table-reponsive">
+								<thead>
+									<tr>
+										<th>No.</th>
+										<th style="text-align: center">Word Family</th>
+										<th>
+											<button type="submit" name="addWF" class="genric-btn primary circle small">New WF</button>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="row,rowStat : *{synonyms}">
+										<td th:text="${rowStat.count}">1</td>
+										<td><input id="fami" class="form-control" type="text" pattern="^[A-Za-z ][A-Za-z0-9!@#$%^&_'*\.,?<>()+\- ]*$"
+											th:field="${wordForm.synonyms[__${rowStat.index}__].synonymName}" /></td>
+										<td>
+											<button type="submit" name="removeWF" class="genric-btn danger small"
+												th:value="${rowStat.index}" formnovalidate >Remove</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="form-group" style="height:30px">
+						
+						</div>
+						<!-- Sentences -->
 						<div class="form-group">
 							<table class="table table-reponsive">
 								<thead>
@@ -297,7 +327,7 @@ keyframes mymove { 100% {
 	<script type="text/javascript">
 		$(function() {
 			$(":text").prop('required',true);
-			$(":text").not("#name").attr('minlength',5);
+			$(":text").not("#name, #fami").attr('minlength',5);
 			
 			if ($("#invalidForm").text() || $("#modify").val())
 				$('#myModal').modal();

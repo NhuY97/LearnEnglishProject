@@ -1,8 +1,6 @@
 package eng.spr.service;
 
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eng.spr.model.Lesson;
-import eng.spr.model.SentenceEng;
-import eng.spr.model.SentenceVi;
 import eng.spr.model.Word;
 import eng.spr.repository.LessonRepository;
 

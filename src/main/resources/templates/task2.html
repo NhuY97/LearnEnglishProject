@@ -15,7 +15,7 @@
 <!-- meta character set -->
 <meta charset="UTF-8">
 <!-- Site Title -->
-<title th:text="'Lesson '+${session.lesson.name}+' - Task 1'"></title>
+<title th:text="'Lesson '+${session.lesson.name}+' - Task 2'"></title>
 
 <link href="https://fonts.googleapis.com/css?family=Poppins:300,500,600"
 	rel="stylesheet">
@@ -43,24 +43,22 @@
 
 #ani2 {
 	font-family: courier;
-	margin-top:30px;
+	margin-top: 30px;
 	-webkit-transition: width 2s;
 	font-size: 0px;
 	/* For Safari 3.1 to 6.0 */
 	transition: font-size 2s;
 	-webkit-transition: font-size 2s;
 }
+
 #ani2>p {
 	color: red;
 	text-align: center;
 }
+
 #ani>p {
 	color: green;
 	text-align: center;
-}
-
-#eng, #vi {
-	font-size: x-large
 }
 
 #eng::placeholder {
@@ -104,8 +102,9 @@ keyframes mymove { 100% {
 					<div
 						class="header-top d-flex justify-content-between align-items-center">
 						<div class="logo">
-							<a th:href="@{/index}" style="color: violet">Home</a>
-							<a th:href="@{/lesson/__${session.lesson.id}__/__${session.order}__}" style="color: violet">Back</a>
+							<a th:href="@{/index}" style="color: violet">Home</a> <a
+								th:href="@{/lesson/__${session.lesson.id}__/__${session.order}__}"
+								style="color: violet">Back</a>
 						</div>
 						<div class="main-menubar d-flex align-items-center">
 							<nav class="hide">
@@ -125,10 +124,10 @@ keyframes mymove { 100% {
 			<div class="content" style="text-align: center">
 				<h1 id="textShadow" style="font-family: Playfair Display"
 					class="text-uppercase"
-					th:text="'lesson '+${session.lesson.name}+ ' - Task 1'"></h1>
+					th:text="'lesson '+${session.lesson.name}+ ' - Task 2'"></h1>
 				<img id="myAvatar" class="img-thumbnail" th:src="@{/img/avatar.jpg}"
 					alt="" /><br />
-				<p>Translate Vietnamese sentences to English</p>
+				<p>Find Word Families</p>
 			</div>
 		</div>
 	</div>
@@ -143,40 +142,41 @@ keyframes mymove { 100% {
 					<p id="score"></p>
 				</div>
 				<form action="#"
-					th:action="@{/do/lesson/__${session.order}__/task1}" method="post">
+					th:action="@{/do/lesson/__${session.order}__/task2}" method="post"
+					th:object="${answerTask2}">
 					<div class="form-group">
 						<div class="col-sm-12">
-							<input type="hidden" id="offset" th:value="${session.offsetT1}" />
-							<input type="hidden" id="total" th:value="${total}" /> <input
-								type="hidden" id="finish" th:value="${finish}" /> <input
-								type="hidden" id="progress" th:value="${progress}" />
-							<div class="progress">
-								<div class="progress-bar progress-bar-striped bg-success"
-									role="progressbar" width="10%" aria-valuenow="0" aria-valuemin="0"
-									aria-valuemax="100"></div>
+							<input type="hidden" id="complete" th:value="${session.complete}" />
+						</div>
+					</div>
+					<th:block th:each="word,stat : ${words}">
+						<div class="form-group">
+							<div class="col-sm-12">
+								<input
+									style="background: violet; opacity: 0.8; color: #fff; text-align: center"
+									readonly="readonly" type="text" name="word"
+									class="form-control" th:value="${word.name}" />
 							</div>
 						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-12">
-							<input
-								style="background: violet; opacity: 0.8; color: #fff; text-align: center"
-								readonly="readonly" type="text" name="question"
-								class="form-control" id="vi" th:value="${sentenceVi}" />
+
+						<div class="form-group">
+							<div class="col-sm-12">
+								<input type="text"
+									th:class="@{form-control myAns __${mapResult == null ? '': mapResult.get(stat.count)}__}"
+									style="text-align: center; border: 1px violet solid"
+									placeholder="Enter your answer" autofocus="autofocus"
+									th:field="${answerTask2.arrAnswer[__${stat.count - 1}__]}"
+									pattern="^[A-Za-z ][A-Za-z0-9;!@#$%^&_'*\.,?<>()+\- ]*$"
+									name="wordFamily" th:id="@{input__${stat.count}__}" />
+								<input th:id="@{hidden__${stat.count}__}" type="hidden"
+									th:value="${arrAnswerFlash == null ? '' : arrAnswerFlash[__${stat.count - 1}__]}" />
+							</div>
 						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-12">
-							<input type="text" class="form-control" th:value="${answer}"
-								id="eng" style="text-align: center; border: 1px violet solid"
-								placeholder="Enter your answer" autofocus="autofocus"
-								pattern="^[A-Za-z ][A-Za-z0-9!@#$%^&_'*\.,?<>()+\- ]*$" name="answer" />
-						</div>
-					</div>
+					</th:block>
 					<div class="form-group">
 						<div style="float: right; margin-right: 12px">
 							<button type="submit" name="submit"
-								class="genric-btn primary-border">Next >></button>
+								class="genric-btn primary-border">Submit</button>
 						</div>
 					</div>
 				</form>
@@ -240,58 +240,24 @@ keyframes mymove { 100% {
 	<script type="text/javascript">
 		$(function() {
 			$(":text").prop('required', true);
-			$(":text").attr('minlength', 5);
+			var myAns = $(".myAns");
+			for (var i = 1; i <= myAns.length; i++) {
+				$("#input" + i).val($("#hidden" + i).val());
+			}
 			if ($("#deleteErrMessage").text())
 				$('#messageModal').modal();
-			if ($("#eng").val())
-				$("#eng").css("border", "1px red solid");
+			$(".false").css("border", "1px red solid");
+			$(".true").css("border", "1px green solid");
+			$(".warning").css("border", "1px orange solid");
 			//
-			//
-		    var bar = $(".progress-bar");
-		
-		    var offset = parseInt($("#offset").val());
-		    var total = parseInt($("#total").val());
-			if(offset == -1) offset = total;
-			if(offset == 0) bar.width('1%');
-			else{
-		    var valueNow = (offset/total)*100;
-		    var range = (1/total)*100;
-		    bar.attr('aria-valuenow',valueNow-range);
-		    bar.attr('aria-valuemax',total);
-		    if($("#progress").val()){
-		    var progress = setInterval(function() {
-				var current = parseInt(bar.attr('aria-valuenow'));
-			      //clear timer when max is reach
-			      if (current == -range || current >= valueNow){
-			        clearInterval(progress);
-			        var setTime = setTimeout(function(){ 
-			        	if($("#finish").val()) {
-			        		$("form").remove();
-							$("#ani").css("font-size","60px");
-							$("#ani").css("transform","rotateY(360deg)");
-							$("#score").text('Score: '+total*100);
-							$("#ani2").css("font-size","40px");
-			        	}
-			        	}, 400);
-					
-					}
-		      //update the progress
-		        bar.width(current+'%');
-		        current+=10;
-		        bar.attr('aria-valuenow',current);
-		    }, 150);
-			} else {
-				bar.width(valueNow+'%');
-				if($("#finish").val()) {
-	        		$("form").remove();
-					$("#ani").css("font-size","60px");
-					$("#ani").css("transform","rotateY(360deg)");
-					$("#score").text('Score: '+total*100);
-					$("#ani2").css("font-size","40px");	
+			if ($("#complete").val()) {
+				$("form").remove();
+				$("#ani").css("font-size", "60px");
+				$("#ani").css("transform", "rotateY(360deg)");
+				$("#score").text('Score: ' + myAns.length * 100);
+				$("#ani2").css("font-size", "40px");
 			}
-			}}
 		});
-		
 	</script>
 </body>
 </html>

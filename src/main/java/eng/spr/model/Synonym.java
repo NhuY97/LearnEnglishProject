@@ -22,10 +22,9 @@ public class Synonym implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	int id;
-	@Column(name="synony_name",unique=true)
+	private int id;
+	@Column(name="synonym_name",unique=true)
 	private String synonymName;
-	private String mean;
 	@ManyToOne
 	@JoinColumn(name="wordId")
 	private Word word;
@@ -42,23 +41,16 @@ public class Synonym implements Serializable{
 	public void setSynonymName(String synonymName) {
 		this.synonymName = synonymName;
 	}
-	public String getMean() {
-		return mean;
-	}
-	public void setMean(String mean) {
-		this.mean = mean;
-	}
 	public Word getWord() {
 		return word;
 	}
 	public void setWord(Word word) {
 		this.word = word;
 	}
-	public Synonym(int id, String synonymName, String mean, Word word) {
+	public Synonym(int id, String synonymName, Word word) {
 		super();
 		this.id = id;
 		this.synonymName = synonymName;
-		this.mean = mean;
 		this.word = word;
 	}
 	
