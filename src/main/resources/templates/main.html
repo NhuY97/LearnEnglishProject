@@ -142,14 +142,14 @@ keyframes mymove { 100% {
 					<div class="col-md-4">
 						<div class="single-feature"
 							th:title="'Lesson '+ ${session.order}+' - Task 3'">
-							<a th:href="@{/do/lesson/__${session.order}__/task3}"><div class="icon" style="cursor: pointer">
+							<a href="javascript:void(0)"><div class="icon" style="cursor: pointer">
 								<span class="lnr lnr-code"></span>
 							</div></a>
 							<div class="desc text-center">
 								<h6 class="title text-uppercase" style="color: green">Task
 									3</h6>
 								<p>
-									<span style="color: violet">Fill in the blanks<br />
+									<span style="color: violet">######<br />
 									</span>
 							</div>
 						</div>
@@ -158,7 +158,7 @@ keyframes mymove { 100% {
 					<div class="col-md-4">
 						<div class="single-feature"
 							th:title="'Lesson '+ ${session.order}+' - Analysis'">
-							<a th:href="@{/}"><div class="icon" style="cursor: pointer">
+							<a th:href="@{/lesson/__${session.order}__/analysis}"><div class="icon" style="cursor: pointer">
 								<span class="lnr lnr-earth"></span>
 							</div></a>
 							<div class="desc text-center">

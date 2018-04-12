@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import eng.spr.model.AnalysisTask1;
+import eng.spr.model.AnalysisTask2;
 import eng.spr.model.Lesson;
 import eng.spr.model.SentenceEng;
 import eng.spr.model.SentenceVi;
@@ -38,8 +40,12 @@ import eng.spr.service.SentenceEngService;
 import eng.spr.service.SentenceViService;
 import eng.spr.service.SynonymService;
 import eng.spr.service.WordService;
-import javassist.CodeConverter.ArrayAccessReplacementMethodNames;
-
+/*
+ * Author: Tran Nguyen Thanh Nhu Y - YZENNY97
+ * Date: 07/10/2018 14:18
+ * Email: nhuytnt1608@gmail.com
+ * University: HCMUTE
+ * */
 @Controller
 public class MainController {
 	@Autowired
@@ -394,6 +400,39 @@ public class MainController {
 	}
 	
 	/*END TASK 2*/
+	/*BEGIN ANALYSIS */
+	
+	@RequestMapping(value="lesson/{order}/analysis", method=RequestMethod.GET)
+	public String analysis(@PathVariable("order") String order, HttpSession session, Model m) {
+		if (session.getAttribute("lesson") == null)
+			return "redirect:/";
+		Lesson lesson = (Lesson)session.getAttribute("lesson");
+		List<AnalysisTask1> listAT1ByLesson = analysisTask1Service.findByLesson(lesson);
+		List<AnalysisTask2> listAT2ByLesson = analysisTask2Service.findByLesson(lesson);
+		int totalTimesAT1 = 0;
+		int wrongTimesAT1 = 0;
+		int totalTimesAT2 = 0;
+		int wrongTimesAT2 = 0;
+		for(AnalysisTask1 at1 : listAT1ByLesson) {
+			totalTimesAT1 += at1.getTotalTimes();
+			wrongTimesAT1 += at1.getWrongTimes();
+		}
+
+		for(AnalysisTask2 at2 : listAT2ByLesson) {
+			totalTimesAT2 += at2.getTotalTimes();
+			wrongTimesAT2 += at2.getWrongTimes();
+		}
+		m.addAttribute("totalTimesAT1", totalTimesAT1);
+		m.addAttribute("wrongTimesAT1", wrongTimesAT1);
+		m.addAttribute("totalTimesAT2", totalTimesAT2);
+		m.addAttribute("wrongTimesAT2", wrongTimesAT2);
+		
+		m.addAttribute("listAT2ByLesson", listAT2ByLesson);
+		m.addAttribute("listAT1ByLesson", listAT1ByLesson);
+		return "analysis";
+	}
+	
+	/*END ANALYSIS */
 	//
 	private String formatSentence(String str) {
 		str = str.trim().toLowerCase();

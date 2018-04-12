@@ -1,11 +1,16 @@
 package eng.spr.service;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eng.spr.model.AnalysisTask1;
+import eng.spr.model.Lesson;
+import eng.spr.model.Word;
 import eng.spr.repository.AnalysisTask1Repository;
 
 @Service
@@ -43,5 +48,25 @@ public class AnalysisTask1ServiceImpl implements AnalysisTask1Service {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public List<AnalysisTask1> findByLesson(Lesson lesson) {
+		List<AnalysisTask1> rs = new ArrayList<AnalysisTask1>();
+		for(AnalysisTask1 a : findAll()) {
+			if(a.getSentenceEng().getWord().getLesson().getId() == lesson.getId())
+				rs.add(a);
+		}
+		return rs;
+	}
+
+	@Override
+	public List<AnalysisTask1> findByWord(Word word) {
+		List<AnalysisTask1> rs = new ArrayList<AnalysisTask1>();
+		for(AnalysisTask1 a : findAll()) {
+			if(a.getSentenceEng().getWord().getId() == word.getId())
+				rs.add(a);
+		}
+		return rs;
 	}
 }

@@ -44,6 +44,10 @@ public class SentenceEng implements Serializable{
 	public String getSentence() {
 		return sentence;
 	}
+	public String getMainSentence() {
+		String s = sentence.split("```")[0];
+		return s;
+	}
 	public void setSentence(String sentence) {
 		this.sentence = sentence;
 	}
