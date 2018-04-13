@@ -3,8 +3,10 @@ package eng.spr.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -316,6 +318,9 @@ public class MainController {
 			return redirect;
 		}
 		SentenceEng sentenceEng = sentenceEngService.mapSentence(lesson).get(sentenceVi);
+		AnalysisTask1 at1 = analysisTask1Service.findBySentence(sentenceEng);
+		at1.setTotalTimes(at1.getTotalTimes()+1);
+		analysisTask1Service.updateAnalysisTask1(at1);
 		if (sentenceEng == null) {
 			ra.addFlashAttribute("deleteErrMessage", deleteErrMessage);
 			return redirect;
@@ -329,16 +334,14 @@ public class MainController {
 				continue;
 			answerCorrect = answerCorrect.replaceAll("[^\\w\\s]","");
 			answerCorrect = answerCorrect.trim().toLowerCase();
-			AnalysisTask1 at1 = analysisTask1Service.findBySentence(sentenceEng);
-			at1.setTotalTimes(at1.getTotalTimes()+1);
-			analysisTask1Service.updateAnalysisTask1(at1);
 			if (answerCorrect.equals(answerCheck)) {
 				int offset = Integer.valueOf(session.getAttribute("offsetT1").toString()).intValue();
 				session.setAttribute("offsetT1", ++offset);
 				ra.addFlashAttribute("progress", true);
+				return redirect;
+			} else {
 				at1.setWrongTimes(at1.getWrongTimes()+1);
 				analysisTask1Service.updateAnalysisTask1(at1);
-				return redirect;
 			}
 		}
 		ra.addFlashAttribute("answer", answer);
@@ -394,14 +397,17 @@ public class MainController {
 			correctAnswer = correctAnswer.replaceAll("\\s+", " ");
 			String[] answerSplit = answer.split(";");
 			String f = "true";
-			int count =0;
-			for(String a : answerSplit) {
-				if(correctAnswer.indexOf(a+";") == - 1)
-					f = "false";
-				else count++;
-			}
-			if(f.equals("true")) {
-				if(count < correctAnswer.split(";").length - 1) f = "warning";
+			if(checkDuplicateElement(answerSplit)) f = "false";
+			else {
+				int count =0;
+				for(String a : answerSplit) {
+					if(correctAnswer.indexOf(a+";") == - 1)
+						f = "false";
+					else count++;
+				}
+				if(f.equals("true")) {
+					if(count < correctAnswer.split(";").length - 1) f = "warning";
+				}
 			}
 			Word word = wordService.findAllByLessonHasSynonym(lesson).get(i);
 			if(f != "true") {
@@ -424,7 +430,8 @@ public class MainController {
 			session.setAttribute("complete", "true");
 			lesson.setScore(lesson.getScore() + answerTask2.getArrAnswer().length*100);
 			lessonService.updateLesson(lesson);
-			
+			for(Word w : wordService.findAllByLessonHasSynonym(lesson))
+				session.removeAttribute(w.getName());
 		}
 		return redirect;
 	}
@@ -562,5 +569,14 @@ public class MainController {
 			break;
 		}
 		return newWord;
+	}
+	private boolean checkDuplicateElement(String[] zipcodelist) {
+		  Set<String> lump = new HashSet<String>();
+		  for (String i : zipcodelist)
+		  {
+		    if (lump.contains(i)) return true;
+		    lump.add(i);
+		  }
+		  return false;
 	}
 }

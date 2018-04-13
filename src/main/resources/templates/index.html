@@ -79,7 +79,7 @@
 				<div class="row">
 					<div class="col-md-4" th:each="lesson,iterationStatus : ${lessons}">
 						<div class="single-feature"
-							th:title="'Lesson ' + ${iterationStatus.count} +' - ' + ${lesson.name}">
+							th:title="'Lesson ' + ${iterationStatus.count} +' - ' + ${lesson.name}+ ' - ' + ${lesson.mean}">
 							<a th:href="@{'/lesson/'+${lesson.id}}+'/'+${iterationStatus.count}"><div
 									class="icon" style="cursor: pointer">
 									<span class="lnr lnr-sun"></span>
