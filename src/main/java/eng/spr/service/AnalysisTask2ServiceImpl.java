@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eng.spr.model.AnalysisTask2;
 import eng.spr.model.Lesson;
+import eng.spr.model.Word;
 import eng.spr.repository.AnalysisTask2Repository;
 
 @Service
@@ -57,5 +58,26 @@ public class AnalysisTask2ServiceImpl implements AnalysisTask2Service {
 				rs.add(a);
 		}
 		return rs;
+	}
+
+	@Override
+	public AnalysisTask2 findByWord(Word word) {
+		for(AnalysisTask2 a : findAll()) {
+			if(a.getWord().getId() == word.getId())
+				return a;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean updateAnalysisTask2(AnalysisTask2 at2) {
+		AnalysisTask2 at2Update = findOne(at2.getId());
+		if(at2Update == null)
+			return false;
+		at2Update.setWord(at2.getWord());
+		at2Update.setTotalTimes(at2.getTotalTimes());
+		at2Update.setWrongTimes(at2.getWrongTimes());
+		analysisTask2Repository.save(at2Update);
+		return true;
 	}
 }

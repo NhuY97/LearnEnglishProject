@@ -4,6 +4,7 @@ import java.util.List;
 
 import eng.spr.model.AnalysisTask1;
 import eng.spr.model.Lesson;
+import eng.spr.model.SentenceEng;
 import eng.spr.model.Word;
 
 public interface AnalysisTask1Service {
@@ -13,5 +14,6 @@ public interface AnalysisTask1Service {
 	public boolean deleteAnalysisTask1(int id);
 	public List<AnalysisTask1> findByLesson(Lesson lesson);
 	public List<AnalysisTask1> findByWord(Word word);
-	
+	public AnalysisTask1 findBySentence(SentenceEng sentence);
+	public boolean updateAnalysisTask1(AnalysisTask1 at1);
 }

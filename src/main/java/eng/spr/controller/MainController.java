@@ -209,6 +209,9 @@ public class MainController {
 			word.setLesson(lesson);
 			try {
 				wordService.insertWord(word);
+				AnalysisTask2 at2 = new AnalysisTask2();
+				at2.setWord(word);
+				analysisTask2Service.insertAnalysisTask2(at2);
 			} catch (DataIntegrityViolationException e) {
 				ra.addFlashAttribute("invalidForm", true);
 				return redirect;
@@ -243,6 +246,9 @@ public class MainController {
 					try {
 						sentenceEngService.insertSentenceEng(sentenceEng);
 						sentenceViService.insertSentenceVi(sentenceVi);
+						AnalysisTask1 at1 = new AnalysisTask1();
+						at1.setSentenceEng(sentenceEng);
+						analysisTask1Service.insertAnalysisTask1(at1);
 					} catch (DataIntegrityViolationException e) {
 						ra.addFlashAttribute("dup_sentence", true);
 					}
@@ -323,10 +329,15 @@ public class MainController {
 				continue;
 			answerCorrect = answerCorrect.replaceAll("[^\\w\\s]","");
 			answerCorrect = answerCorrect.trim().toLowerCase();
+			AnalysisTask1 at1 = analysisTask1Service.findBySentence(sentenceEng);
+			at1.setTotalTimes(at1.getTotalTimes()+1);
+			analysisTask1Service.updateAnalysisTask1(at1);
 			if (answerCorrect.equals(answerCheck)) {
 				int offset = Integer.valueOf(session.getAttribute("offsetT1").toString()).intValue();
 				session.setAttribute("offsetT1", ++offset);
 				ra.addFlashAttribute("progress", true);
+				at1.setWrongTimes(at1.getWrongTimes()+1);
+				analysisTask1Service.updateAnalysisTask1(at1);
 				return redirect;
 			}
 		}
@@ -367,6 +378,12 @@ public class MainController {
 		Lesson lesson =(Lesson)session.getAttribute("lesson"); 
 		if (lesson == null)
 			return "redirect:/";
+		for(AnalysisTask2 at2 : analysisTask2Service.findByLesson(lesson)) {
+			if(session.getAttribute(at2.getWord().getName()) == null) {
+				at2.setTotalTimes(at2.getTotalTimes() + 1);
+				analysisTask2Service.updateAnalysisTask2(at2);
+			}
+		}
 		String redirect = "redirect:/do/lesson/"+session.getAttribute("order")+"/task2";
 		Map<Integer,String> mapResult = new HashMap<Integer,String>();
 		for(int i = 0;i<answerTask2.getArrAnswer().length;i++) {
@@ -383,18 +400,31 @@ public class MainController {
 					f = "false";
 				else count++;
 			}
-			if(f.equals("true"))
+			if(f.equals("true")) {
 				if(count < correctAnswer.split(";").length - 1) f = "warning";
+			}
+			Word word = wordService.findAllByLessonHasSynonym(lesson).get(i);
+			if(f != "true") {
+				AnalysisTask2 at2 = analysisTask2Service.findByWord(word);
+				at2.setWrongTimes(at2.getWrongTimes() +1);
+				analysisTask2Service.updateAnalysisTask2(at2);
+			} else {
+				session.setAttribute(word.getName(), true);
+			}
+				
+				
 			mapResult.put(i+1,f);
 		}
 		ra.addFlashAttribute("mapResult",mapResult);
 		ra.addFlashAttribute("arrAnswerFlash", answerTask2.getArrAnswer());
 		if(session.getAttribute("complete") != null)
 			session.removeAttribute("complete");
+		
 		if(!mapResult.containsValue("false") && !mapResult.containsValue("warning")) {
 			session.setAttribute("complete", "true");
 			lesson.setScore(lesson.getScore() + answerTask2.getArrAnswer().length*100);
 			lessonService.updateLesson(lesson);
+			
 		}
 		return redirect;
 	}
