@@ -6,3 +6,4 @@
 
 - should guide tech-user about database configuration
 - should following standard format from Google or AWZ
+- should break smaller components following S.O.L.I.D
