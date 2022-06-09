@@ -5,3 +5,4 @@
 # Tran Nguyen Thanh Nhu Y - 14/04/2018
 
 - should guide tech-user about database configuration
+- should following standard format from Google or AWZ
